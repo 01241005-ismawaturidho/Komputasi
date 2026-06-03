@@ -67,11 +67,98 @@ Data yang digunakan berupa data jumlah sunspot terhadap waktu yang diberikan pad
 
 * **Source code**
 
-| *\# CASE 1 \- ASTROPHYSICS* *\# TASK 1-5 (ALL IN ONE)* import numpy as np import pandas as pd import matplotlib.pyplot as plt *\# TASK 1 : LOAD DATA* data \= pd.read\_csv("sunspots.csv") if "Date" in data.columns:     data\["Date"\] \= pd.to\_datetime(data\["Date"\])     y \= data\["Monthly Mean Total Sunspot Number"\].values else:     y \= data\["Sunspot\_Count"\].values print(f"Number of data points \= {len(y)}") *\# TASK 2 : REMOVE DC COMPONENT* y\_centered \= y \- np.mean(y) *\# TASK 3 : FFT* N \= len(y\_centered) *\# Data bulanan \-\> sampling interval 1/12 tahun* dt \= 1/12 Y \= np.fft.rfft(y\_centered) freq \= np.fft.rfftfreq(N, d\=dt) *\# TASK 4 : POWER SPECTRUM* power \= np.abs(Y)\*\*2 *\# Hilangkan frekuensi nol* freq \= freq\[1:\] power \= power\[1:\] *\# Konversi ke periode (tahun)* period \= 1 / freq *\# TASK 5 : DOMINANT SOLAR CYCLE* peak\_idx \= np.argmax(power) dominant\_period \= period\[peak\_idx\] dominant\_frequency \= freq\[peak\_idx\] print("\\n===== RESULTS \=====") print(f"Dominant Frequency \= {dominant\_frequency:.5f} cycles/year") print(f"Dominant Solar Cycle \= {dominant\_period:.2f} years") *\# FINAL GRAPH* plt.figure(figsize\=(10,5)) plt.plot(period, power, linewidth\=1.5) plt.axvline(     dominant\_period,     color\='red',     linestyle\='--',     label\=f'Peak \= {dominant\_period:.2f} years' ) plt.xlim(0,30) plt.xlabel("Solar Cycle Period (Years)") plt.ylabel("Power") plt.title("Sunspot Power Spectrum") plt.legend() plt.grid(True) plt.tight\_layout() plt.show()  |
-| :---- |
+# =====================================================
+# CASE 1 - ASTROPHYSICS
+# TASK 1-5 (ALL IN ONE)
+# =====================================================
 
-**Number of data points \= 3252**  
-**Dominant Frequency \= 0.09225 cycles/year**  
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# -----------------------------------------------------
+# TASK 1 : LOAD DATA
+# -----------------------------------------------------
+
+data = pd.read_csv("sunspots.csv")
+
+if "Date" in data.columns:
+    data["Date"] = pd.to_datetime(data["Date"])
+    y = data["Monthly Mean Total Sunspot Number"].values
+else:
+    y = data["Sunspot_Count"].values
+
+print(f"Number of data points = {len(y)}")
+
+# -----------------------------------------------------
+# TASK 2 : REMOVE DC COMPONENT
+# -----------------------------------------------------
+
+y_centered = y - np.mean(y)
+
+# -----------------------------------------------------
+# TASK 3 : FFT
+# -----------------------------------------------------
+
+N = len(y_centered)
+
+# Data bulanan -> sampling interval 1/12 tahun
+dt = 1/12
+
+Y = np.fft.rfft(y_centered)
+freq = np.fft.rfftfreq(N, d=dt)
+
+# -----------------------------------------------------
+# TASK 4 : POWER SPECTRUM
+# -----------------------------------------------------
+
+power = np.abs(Y)**2
+
+# Hilangkan frekuensi nol
+freq = freq[1:]
+power = power[1:]
+
+# Konversi ke periode (tahun)
+period = 1 / freq
+
+# -----------------------------------------------------
+# TASK 5 : DOMINANT SOLAR CYCLE
+# -----------------------------------------------------
+
+peak_idx = np.argmax(power)
+
+dominant_period = period[peak_idx]
+dominant_frequency = freq[peak_idx]
+
+print("\n===== RESULTS =====")
+print(f"Dominant Frequency = {dominant_frequency:.5f} cycles/year")
+print(f"Dominant Solar Cycle = {dominant_period:.2f} years")
+
+# -----------------------------------------------------
+# FINAL GRAPH
+# -----------------------------------------------------
+
+plt.figure(figsize=(10,5))
+
+plt.plot(period, power, linewidth=1.5)
+
+plt.axvline(
+    dominant_period,
+    color='red',
+    linestyle='--',
+    label=f'Peak = {dominant_period:.2f} years'
+)
+
+plt.xlim(0,30)
+
+plt.xlabel("Solar Cycle Period (Years)")
+plt.ylabel("Power")
+plt.title("Sunspot Power Spectrum")
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
 **Dominant Solar Cycle \= 10.84 year**
 
 * **Hasil Output**
